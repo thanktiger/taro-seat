@@ -1,0 +1,19 @@
+.starWarp {
+  background-color: #081142;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  // transition: all s;
+  .star {
+    background-color: red;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    // border-radius: 50%;
+    transition: all 1s;
+    top: 0;
+    // left: 800PX;
+    // transform: scale(0);
+    // animation: moveBig 3s infinite linear;
+  }
+}
