@@ -18,20 +18,11 @@ export default class Index extends Component {
 
   componentWillUnmount () { }
 
-  componentDidShow () { 
-    var animation = wx.createAnimation({
-      duration: 2000,
-      timingFunction: 'ease',
-    })
-
-    this.animation = animation
-  }
-
   componentDidHide () { }
 
   render () {
     return (
-      <View className='wrap' />
+      <View className='wrap'>1</View>
     )
   }
 }
