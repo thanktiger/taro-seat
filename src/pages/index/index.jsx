@@ -1,15 +1,15 @@
 import { Component } from 'react'
-import Taro, { Current } from '@tarojs/taro'
-import { View, Canvas, Image } from '@tarojs/components'
+import Taro from '@tarojs/taro'
+import { View, Canvas } from '@tarojs/components'
 import './index.scss'
 
 export default class Index extends Component {
 
   constructor(props) {
     super(props)
-    this.state = {
-      animationData: {}
-    }
+    // this.state = {
+    //   animationData: {}
+    // }
     this.areas = [
       [
           {x: 109.666, y: 182.831},
@@ -38,6 +38,7 @@ export default class Index extends Component {
           {x: 189.82, y: 50.512},
       ] 
   ]
+  this.canvasbgPath = []
   }
 
   componentWillMount () {
@@ -45,44 +46,36 @@ export default class Index extends Component {
   }
 
   componentDidMount () {
-    setTimeout(() => {
-      Taro.createSelectorQuery()
-      .select('#canvas')
-      .fields({
-        node: true,
-        size: true,
+    let promiseDatas = []
+    let p =  new Promise((resolve, reject) => {
+      Taro.getImageInfo({ src: 'https://img.lengliwh.com/pic/theatre/PXKDEWKJQANG.png' }).then(res => {
+        if (res.path) {
+          resolve({ backgroundImge: res.path })
+        } else {
+          reject('error')
+        }
       })
-      .exec(this.init.bind(this))
-    }, 1000);
-  }
-
-  init (res) {
-    console.log('res:', res)
-    const canvas = res && res[0].node
-    this.ctx = canvas.getContext('2d')
-    console.log('ctx:', this.ctx)
-
-    const img = canvas.createImage()
-    img.onload = () => {
-      this._img = img
-    }
-    img.src = 'https://img.lengliwh.com/pic/theatre/PXKDEWKJQANG.png'
-
-    this.draw()
+    })
+    promiseDatas.push(p)
+    Promise.all(promiseDatas).then(res => {
+      let data = {}
+      res.forEach(item => {
+        Object.assign(data, item)
+      })
+      this.canvasbgPath = data
+      this.draw()
+    })
   }
 
   draw = () => {
-    const ctx = this.ctx
-    ctx.globalCompositeOperation='destination-over'
-    // var img = new Image()
-    // console.log('img is:', img)
-    // img.onload = function(){
-    //     ctx.drawImage(img, 0, 0)
-    // }
-    // img.src = 'https://img.lengliwh.com/pic/theatre/PXKDEWKJQANG.png' // 设置图片源地址
-    console.log('ctxctx is', ctx)
-    ctx.setStrokeStyle = 'red'
-    this.areas.forEach(area => {
+    const ctx = Taro.createCanvasContext('drawCanvas')
+    let images = this.canvasbgPath
+
+    if (images.backgroundImge) {
+      ctx.drawImage(images.backgroundImge, 0, 0)
+    }
+      ctx.setStrokeStyle('red')
+      this.areas.forEach(area => {
         ctx.beginPath();
         area.forEach((item, index) => {
             if (index === 0) {
@@ -92,7 +85,8 @@ export default class Index extends Component {
         })
         // ctx.closePath()
         ctx.stroke()
-    })
+      })
+      ctx.draw()
   }
 
   onClick = (e) => {
@@ -106,7 +100,7 @@ export default class Index extends Component {
   render () {
     return (
       <View className='wrap'>
-        <Canvas type='2d' id='canvas' style='width: 500px; height: 500px;'></Canvas>
+        <Canvas canvasId='drawCanvas' style='width: 500px; height: 500px;'></Canvas>
       </View>
     )
   }
