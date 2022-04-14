@@ -21,6 +21,8 @@ export default class Index extends Component {
     this.seatWith = 20
     this.seatHeight = 20
     this.scale = 1
+    this.canvasX = 0
+    this.canvasY = 0
   }
 
   componentWillMount () {
@@ -96,39 +98,52 @@ export default class Index extends Component {
     const y = e.touches[0].y
     console.log('x is:', x);
     console.log('y is:', y);
+    //计算点击画布的X轴
+    const clickX = x + (this.canvasX / this.scale)
+    //计算点击画布的Y轴
+    const clickY = y + (this.canvasY / this.scale)
+    console.log(clickX, clickY)
     const { seat_width, seat_height } = this.state
-    const point = {x: Math.ceil(x / CELL_WIDTH), y: Math.ceil(y / CELL_HEIGHT)}
-    let seatPoint = this.avalibleSeats[point.x + '_' + point.y]
-    if (seatPoint) {
-        this.ctx.clearRect(0, 0, Math.ceil(seat_width / 2), Math.ceil(seat_height / 2))
-        selectedSeats[point.x + '_' + point.y] = !selectedSeats[point.x + '_' + point.y]
-        this.draw()
-    }
+    // const point = {x: Math.ceil(clickX / (CELL_WIDTH * this.scale)), y: Math.ceil(clickY / (CELL_HEIGHT * this.scale))}
+    // let seatPoint = this.avalibleSeats[point.x + '_' + point.y]
+    // if (seatPoint) {
+    //     this.ctx.clearRect(0, 0, Math.ceil(seat_width / 2), Math.ceil(seat_height / 2))
+    //     selectedSeats[point.x + '_' + point.y] = !selectedSeats[point.x + '_' + point.y]
+    //     this.draw()
+    // }
+    this.ctx.fillStyle = 'red'
+    this.ctx.fillRect( Math.ceil(x),  Math.ceil(y), Math.ceil(seat_width / 2), Math.ceil(seat_height / 2))
 }
 
+  // 移动画布
   onTouchMove = (e) => {
-      // 单指操作
-      if(e.touches.length == 1) {
-        this.moveX = this.toucheX - e.touches[0].x
-        this.moveY = this.toucheY - e.touches[0].y
-        this.draw()
-      } else if (e.touches.length == 2) {
-        let _x = e.touches[1].x - e.touches[0].x,
-        _y = e.touches[1].y -  e.touches[0].y,
-        distance = Math.sqrt(Math.pow(_x, 2) + Math.pow(_y, 2))
-        if(this.distance < distance) {
-          this.scale += 0.1
-        } else if (this.distance > distance) {
-          this.scale -= 0.1
-        }
-        this.draw()
-      }
+    let {x, y} = e.mpEvent.detail
+    this.canvasX = x
+    this.canvasY = y
+  }
+
+  // 放大画布
+  onTouchScale = (e) => {
+    let {scale, x, y} = e.mpEvent.detail
+    this.scale = scale
+    this.canvasX = x
+    this.canvasY = y
   }
 
   render () {
     return (
       <MovableArea scaleArea style={{ width: '100%', height: '100vh' }}>
-        <MovableView scale outOfBounds style={{ width: WINDOW_WIDTH , height: WINDOW_WIDTH / 2}} direction='all'>
+        <MovableView 
+          scale 
+          scaleMax={5} 
+          scaleMin={1} 
+          outOfBounds
+          animation
+          direction='all'
+          style={{ width: WINDOW_WIDTH, height: WINDOW_WIDTH / 2}}
+          onChange={(e) => this.onTouchMove(e)}
+          onScale={(e) => this.onTouchScale(e)}
+        >
           <Canvas
             type='2d'
             id='canvas'
