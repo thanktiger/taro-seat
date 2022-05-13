@@ -1,5 +1,101 @@
-page {
+.wrap {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #F7F7F7;
+}
+
+.priceInfo {
+  width: 100%;
+  height: 98px;
+  margin-bottom: 40px;
+  background: #FFFFFF;
+}
+
+.seatsAreaMain {
+  position: relative;
+  flex: 1;
+  background: #FFFFFF;
+}
+
+.seatsArea {
   width: 100%;
   height: 100%;
-  overflow: scroll;
+  overflow: hidden;
+
+  .seatsView {
+    position: relative;
+    padding: 0 100px 100px;
+  
+    .seatCell {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  
+      .seatItem {
+        width: 70%;
+        height: 70%;
+        border-radius: 8px;
+      }
+    }
+  }
+}
+
+.seatsMini {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  transform: scale(0.2);
+  transform-origin: right top;
+  background: rgba(0, 0, 0, 0.3);
+
+  .seatsMiniView {
+    position: relative;
+  
+    .seatMiniCell {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  
+      .seatMiniItem {
+        width: 70%;
+        height: 70%;
+        border-radius: 8px;
+      }
+    }
+  }
+}
+
+.seatsRowNumber {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  height: 100%;
+  transition: all 0.3s;
+  transform-origin: top left;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+
+  .seatsRowNumberItem {
+    position: absolute;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-size: 18px;
+  }
+}
+
+.seatsInfo {
+  height: 278px;
+  margin-top: 262px;
+  background-color: white;
 }
