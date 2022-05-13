@@ -1,12 +1,11 @@
 import { Component } from 'react'
-import Taro, { Current } from '@tarojs/taro'
-import { View, Canvas, Image } from '@tarojs/components'
+import Taro from '@tarojs/taro'
+import { View, Canvas } from '@tarojs/components'
 import './index.scss'
 import allSeats from './seats.json'
 const seats = allSeats.commonSeats
 
 export default class Index extends Component {
-
   constructor(props) {
     super(props)
     this.state = {
@@ -38,20 +37,30 @@ export default class Index extends Component {
     // }
   }
 
-  componentWillMount () {
-    
-  }
+  componentWillMount() {}
 
-  componentDidMount () {
-    setTimeout(() => {
-      Taro.createSelectorQuery()
-      .select('#canvas')
-      .fields({
-        node: true,
-        size: true,
-      })
-      .exec(this.init.bind(this))
-    }, 1000);
+  componentDidMount() {
+    let promiseDatas = [];
+    let p = new Promise((resolve, reject) => {
+      Taro.getImageInfo({
+        src: "https://img.lengliwh.com/pic/theatre/PXKDEWKJQANG.png",
+      }).then((res) => {
+        if (res.path) {
+          resolve({ backgroundImge: res.path });
+        } else {
+          reject("error")
+        }
+      });
+    });
+    promiseDatas.push(p);
+    Promise.all(promiseDatas).then((res) => {
+      let data = {}
+      res.forEach((item) => {
+        Object.assign(data, item)
+      });
+      this.canvasbgPath = data
+      this.draw()
+    });
   }
 
   init (res) {
@@ -261,6 +270,6 @@ export default class Index extends Component {
           onTouchEnd={this.onTouchEnd}
           style={`width: 400px; height: 400px; background: pink;`}></Canvas>
       </View>
-    )
+    );
   }
 }

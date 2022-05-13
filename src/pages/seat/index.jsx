@@ -16,6 +16,13 @@ export default class Index extends Component {
 			scale: 1,
 			selectedSeats: {}
     }
+    this.moveX = 0
+    this.moveY = 0
+    this.seatWith = 20
+    this.seatHeight = 20
+    this.scale = 1
+    this.canvasX = 0
+    this.canvasY = 0
   }
 
   componentWillMount () {
@@ -136,6 +143,21 @@ export default class Index extends Component {
 			</View>
 		)
 	}
+
+  // 移动画布
+  onTouchMove = (e) => {
+    let {x, y} = e.mpEvent.detail
+    this.canvasX = x
+    this.canvasY = y
+  }
+
+  // 放大画布
+  onTouchScale = (e) => {
+    let {scale, x, y} = e.mpEvent.detail
+    this.scale = scale
+    this.canvasX = x
+    this.canvasY = y
+  }
 
   render () {
 		const { areaWidth, areaHeight, selectedSeats } = this.state
