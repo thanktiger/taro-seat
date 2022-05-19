@@ -17,8 +17,7 @@ export default class Index extends Component {
       scaleX: 1.0,
       scaleY: 1.0
     }
-    this.selectedSeats = {}
-    this.rows = {}
+    this.starsPath = []
     this.state = {
       canvasWidth: 0,
       canvasHeight: 0,
@@ -38,6 +37,17 @@ export default class Index extends Component {
   }
 
   componentDidMount () {
+    let { stars } = this.state
+    let promises = []
+    stars.forEach(image => {
+      let p = Taro.getImageInfo({
+        src: image,
+      }).then(res => res && res.path)
+      promises.push(p)
+    })
+    Promise.all(promises).then(result => {
+      this.starsPath = result
+    })
     setTimeout(() => {
       Taro.createSelectorQuery()
       .select('#canvas')
@@ -53,6 +63,11 @@ export default class Index extends Component {
     const { screenWidth, screenHeight, pixelRatio } = wx.getSystemInfoSync()
     const canvas = res[0].node
     this.canvas = canvas
+    for (let i = 0; i < this.starsPath.length; i++) {
+      this['star' + i] = this.canvas.createImage()
+      this['star' + i].src= this.starsPath[i]
+    }
+    this.arrow = this.canvas.createImage()
     const ctx = canvas.getContext('2d')
     this.ctx = ctx
     const dpr = wx.getSystemInfoSync().pixelRatio
@@ -63,7 +78,9 @@ export default class Index extends Component {
       canvas.width = screenWidth * dpr
       canvas.height = screenHeight * dpr
       ctx.scale(dpr, dpr)
-      this.draw()
+      setTimeout(() => {
+        this.draw()
+      }, 500);
     })
   }
 
@@ -72,21 +89,20 @@ export default class Index extends Component {
     const ctx = this.ctx
     ctx.clearRect(0, 0, canvasWidth, canvasHeight)
     ctx.save()
+    let updateAngle = this.updateAngle || 0
     let averageAngle = 360 / stars.length
     let angles = []
     for (let i = 0; i < stars.length; i++) {
       angles.push(averageAngle*i)
-      this['img'+i] = this.canvas.createImage()
     }
-    let translateX = this.translateX + this.transform.translateX
-    let updateAngle = (30 * (translateX / 100))%360
-
     for (let i=0; i<angles.length; i++) {
       let angle = angles[i] + updateAngle + 360
       angle = angle % 360
       this.drawStar(angle, i)
     }
-    // this.drawStarTrack()
+    this.drawTextInfo()
+    this.drawArrow()
+    this.drawStarTrack()
     ctx.restore()
   }
 
@@ -99,8 +115,51 @@ export default class Index extends Component {
     ctx.beginPath()
     ctx.translate(x, y)
     ctx.scale(scale, scale)
-    this['img'+i].src = this.state.stars[i]
-    ctx.drawImage(this['img'+i], 0, 0, starRadius, starRadius)
+    ctx.drawImage(this['star'+i], 0, 0, starRadius, starRadius)
+    ctx.restore()
+  }
+
+  // 星球文案
+  drawTextInfo = () => {
+    let number = 1
+    let eName = 'HALO'
+    let cName = '光环世界'
+    let isLogin = true
+    let ctx = this.ctx
+    ctx.save()
+    // 英文名
+    ctx.translate(24, 406)
+    ctx.font = `${28}px PingFang SC`
+    ctx.fillStyle = '#FFFFFF'
+    ctx.fillText(`0${number} ${eName}`, 0, 0)
+
+    // 中文名
+    ctx.translate(0, 40)
+    ctx.font = `${28}px PingFang SC`
+    ctx.fillText(cName, 0, 0)
+
+    // 是否登录标签
+    ctx.save()
+    ctx.translate(0, 15)
+    if (isLogin) {
+      ctx.fillStyle = '#EFB303'
+      ctx.fillRect(0, 0, 56, 24)
+    } else {
+      ctx.strokeStyle = 'rgba(255,255,255,0.87)'
+      ctx.strokeRect(0, 0, 56, 24)
+    }
+    ctx.translate(28, 12)
+    ctx.font = '14px PingFang SC'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    if (isLogin) {
+      ctx.fillStyle = '#FFFFFF'
+      ctx.fillText('已登录', 0, 0)
+    } else {
+      ctx.fillStyle = 'rgba(255,255,255,0.87)'
+      ctx.fillText('未登录', 0, 0)
+    }
+    ctx.restore()
     ctx.restore()
   }
 
@@ -189,6 +248,26 @@ export default class Index extends Component {
     }
   }
 
+  // 底部箭头
+  drawArrow = () => {
+    const { canvasWidth, canvasHeight } = this.state
+    let iconWidth = 56
+    let ctx = this.ctx
+    if (!this.arrow.src) {
+      Taro.getImageInfo({
+        src: 'https://bfe.oss-cn-hangzhou.aliyuncs.com/ic_number_star_arrow.png',
+        success: (res) => {
+          this.arrow.src = res.path
+          this.arrow.onload = () => {
+            ctx.drawImage(this.arrow, canvasWidth/2-iconWidth/2, canvasHeight-(iconWidth+34), iconWidth, iconWidth)
+          }
+        }
+      })
+    } else {
+      ctx.drawImage(this.arrow, canvasWidth/2-iconWidth/2, canvasHeight-(iconWidth+34), iconWidth, iconWidth)
+    }
+  }
+
   onTouchStart = (e) => {
     const ctx = this.ctx
     if (e.touches.length === 1) {
@@ -208,6 +287,7 @@ export default class Index extends Component {
       let moveX = (e.touches[0].x - this.startX)
       let moveY = (e.touches[0].y - this.startY)
       this.onPaning(moveX, moveY, e.touches[0].x, e.touches[0].y)
+      
     }
   }
 
@@ -216,25 +296,53 @@ export default class Index extends Component {
     if (this.mode === 'click') {
       this.onClick()
     } else {
-      this.transform = this.getCurCombinedTransform()
+      let updateAngle = this.updateAngle > 0 ? this.updateAngle : -this.updateAngle
+      let triggerAngle = updateAngle%60 > 30
+      let targetAngle = updateAngle-(updateAngle%60)
+      if (triggerAngle) {
+        targetAngle = updateAngle-(updateAngle%60)+60
+        this.transform = this.getCurCombinedTransform()
+      }
+      if (this.updateAngle < 0) {
+        targetAngle = -targetAngle
+      }
+      this.onAnimation(targetAngle)
     }
     
     // 重新初始化参数
     this.startX = 0
     this.startY = 0
-    this.startDistance = 0
     this.translateX = 0
     this.translateY = 0
     this.scaleX = 1.0
     this.scaleY = 1.0
     this.mode = undefined
-    this.draw()
+    
+  }
+
+  onAnimation = (targetAngle) => {
+    let angleList = []
+    if (this.updateAngle < targetAngle) {
+      for (let i = this.updateAngle; i < targetAngle; i++) {
+        angleList.push(Math.ceil(i))
+      }
+    } else {
+      for (let i = this.updateAngle; i > targetAngle; i--) {
+        angleList.push(Math.floor(i))
+      }
+    }
+    angleList.forEach((item, index) => setTimeout(() => {
+      this.updateAngle = item
+      this.draw()
+    }, index*5))
   }
 
   onPaning = (moveX, moveY) => {
     this.mode = 'pan'
     this.translateX = -moveX
     this.translateY = -moveY
+    let translateX = this.translateX + this.transform.translateX
+    this.updateAngle = (30 * (translateX / 100))%360
     this.draw()
   }
 
