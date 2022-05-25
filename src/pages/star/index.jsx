@@ -18,16 +18,75 @@ export default class Index extends Component {
       scaleY: 1.0
     }
     this.starsPath = []
+    this.starCurIndex = 0
+    this.updateAngle = 180
     this.state = {
       canvasWidth: 0,
       canvasHeight: 0,
       stars: [
-        'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_1.png',
-        'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_2.png',
-        'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_3.png',
-        'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_4.png',
-        'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_5.png',
-        'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_6.png',
+        {
+          url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_1.png',
+          code: 1,
+          img: {},
+          name: '光环世界',
+          enName: 'HALO',
+          age: 1,
+          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
+        },
+        {
+          url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_2.png',
+          code: 2,
+          img: {},
+          name: '光环世界',
+          enName: 'HALO',
+          age: 1,
+          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
+        },
+        {
+          url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_3.png',
+          code: 3,
+          img: {},
+          name: '光环世界',
+          enName: 'HALO',
+          age: 1,
+          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
+        },
+        {
+          url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_4.png',
+          code: 4,
+          img: {},
+          name: '光环世界',
+          enName: 'HALO',
+          age: 1,
+          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
+        },
+        {
+          url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_5.png',
+          code: 5,
+          img: {},
+          name: '光环世界',
+          enName: 'HALO',
+          age: 1,
+          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
+        },
+        {
+          url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_6.png',
+          code: 6,
+          img: {},
+          name: '光环世界',
+          enName: 'HALO',
+          age: 1,
+          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
+        },
+        // {
+        //   url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_6.png',
+        //   code: 7,
+        //   img: {},
+        //   name: '光环世界',
+        //   enName: 'HALO',
+        //   age: 1,
+        //   desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
+        // }
       ]
     }
   }
@@ -39,9 +98,9 @@ export default class Index extends Component {
   componentDidMount () {
     let { stars } = this.state
     let promises = []
-    stars.forEach(image => {
+    stars.forEach(star => {
       let p = Taro.getImageInfo({
-        src: image,
+        src: star.url,
       }).then(res => res && res.path)
       promises.push(p)
     })
@@ -79,35 +138,64 @@ export default class Index extends Component {
       canvas.height = screenHeight * dpr
       ctx.scale(dpr, dpr)
       setTimeout(() => {
-        this.draw()
+        this.onInitialAnimation()
       }, 500);
     })
   }
 
+  onInitialAnimation = () => {
+    let targetAngle = 0
+    this.count = 0
+    this.animationStartAngle = this.updateAngle
+    this.distance = targetAngle - this.animationStartAngle
+    this.speed = this.distance / 60
+    
+    this.canvas.requestAnimationFrame(() => {
+      this.initialAnimationPlay()
+    })
+  }
+
+  initialAnimationPlay = () => {
+    this.count++
+    let curTarget = this.speed * this.count + this.animationStartAngle
+    if (this.count > this.distance / this.speed) {
+      this.updateAngle = 0
+      this.animationInited = true
+      this.draw()
+    } else {
+      this.updateAngle = curTarget
+      this.draw()
+      this.canvas.requestAnimationFrame(() => {
+        this.initialAnimationPlay()
+      })
+    }
+  }
+
   draw = () => {
-    const { canvasWidth, canvasHeight, stars } = this.state
+    const { canvasWidth, canvasHeight } = this.state
     const ctx = this.ctx
     ctx.clearRect(0, 0, canvasWidth, canvasHeight)
     ctx.save()
     let updateAngle = this.updateAngle || 0
-    let averageAngle = 360 / stars.length
-    let angles = []
-    for (let i = 0; i < stars.length; i++) {
-      angles.push(averageAngle*i)
-    }
-    for (let i=0; i<angles.length; i++) {
-      let angle = angles[i] + updateAngle + 360
+
+
+    let starArray = this.animationInited ? this.getStarsWithCurStarIndex() : this.getInitialStars()
+
+    for (let i=0; i<starArray.length; i++) {
+      let angle = starArray[i].angle + updateAngle + 360
       angle = angle % 360
-      this.drawStar(angle, i)
+      this.drawStar(angle, starArray[i])
     }
-    this.drawTextInfo()
-    this.drawArrow()
-    this.drawStarTrack()
+    if (this.animationInited) {
+      this.drawTextInfo()
+      this.drawArrow()
+      this.drawStarTrack()
+    }
     ctx.restore()
   }
 
   // 星球
-  drawStar = (angle, i) => {
+  drawStar = (angle, starInfo) => {
     let ctx = this.ctx
     let starRadius = 340
     let {scale, x, y} = this.getStarInfo(angle)
@@ -115,52 +203,118 @@ export default class Index extends Component {
     ctx.beginPath()
     ctx.translate(x, y)
     ctx.scale(scale, scale)
-    ctx.drawImage(this['star'+i], 0, 0, starRadius, starRadius)
+    ctx.drawImage(starInfo.image, 0, 0, starRadius, starRadius)
     ctx.restore()
   }
 
   // 星球文案
   drawTextInfo = () => {
-    let number = 1
+    let { angle, index, offsetPercentage } = this.getStarIndexWithAngle()
+    let starInfo = this.state.stars[index]
+    // if (this.updateAngle%60 === 0) {
+    //   console.log('angle', angle, 'index', index, 'starInfo', starInfo);
+    // }
+    let number = starInfo?.code || 0
+    let alpha = (1 - offsetPercentage)*0.9 + 0.1
+    let yOffset = offsetPercentage*20
     let eName = 'HALO'
     let cName = '光环世界'
     let isLogin = true
     let ctx = this.ctx
+    const alpha054 = 0.54
+    const alpha087 = 0.87
+    const white = `rgba(255,255,255,${alpha})`
+    const white054 = `rgba(255,255,255,${alpha > alpha054 ? alpha054 : alpha})`
+    const white087 = `rgba(255,255,255,${alpha > alpha087 ? alpha087 : alpha})`
+    ctx.textBaseline = 'top'
     ctx.save()
+    ctx.translate(24, yOffset)
     // 英文名
-    ctx.translate(24, 406)
-    ctx.font = `${28}px PingFang SC`
-    ctx.fillStyle = '#FFFFFF'
-    ctx.fillText(`0${number} ${eName}`, 0, 0)
-
+    ctx.translate(0, 412.5)
+    ctx.save()
+      ctx.font = `normal 700 ${28}px PingFang SC`
+      ctx.fillStyle = white
+      ctx.fillText(`0${number} ${eName}`, 0, 0)
+    ctx.restore()
     // 中文名
-    ctx.translate(0, 40)
-    ctx.font = `${28}px PingFang SC`
-    ctx.fillText(cName, 0, 0)
+    ctx.translate(0, 36)
+    ctx.save()
+      ctx.font = `normal 600 ${28}px PingFang SC`
+      ctx.fillStyle = white
+      ctx.fillText(cName, 0, 0)
+    ctx.restore()
 
     // 是否登录标签
+    ctx.translate(0, 43.5)
     ctx.save()
-    ctx.translate(0, 15)
-    if (isLogin) {
-      ctx.fillStyle = '#EFB303'
-      ctx.fillRect(0, 0, 56, 24)
-    } else {
-      ctx.strokeStyle = 'rgba(255,255,255,0.87)'
-      ctx.strokeRect(0, 0, 56, 24)
-    }
-    ctx.translate(28, 12)
-    ctx.font = '14px PingFang SC'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    if (isLogin) {
-      ctx.fillStyle = '#FFFFFF'
-      ctx.fillText('已登录', 0, 0)
-    } else {
-      ctx.fillStyle = 'rgba(255,255,255,0.87)'
-      ctx.fillText('未登录', 0, 0)
-    }
+      if (isLogin) {
+        ctx.fillStyle = `rgba(239,179,3,${alpha})`
+        ctx.fillRect(0, 0, 56, 24)
+      } else {
+        ctx.strokeStyle = white
+        ctx.strokeRect(0, 0, 56, 24)
+      }
+      ctx.save()
+      ctx.translate(28, 12)
+      ctx.font = 'normal 500 14px PingFang SC'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      if (isLogin) {
+        ctx.fillStyle = white
+        ctx.fillText('已登录', 0, 0)
+      } else {
+        ctx.fillStyle = white
+        ctx.fillText('未登录', 0, 0)
+      }
+      ctx.restore()
     ctx.restore()
+      
+    // 已登录和未登录的展示信息
+    let isLoginTextItems = ['上次登录时间：', '已收集碎片数：', '已完成任务数：']
+    for (let i = 0; i < isLoginTextItems.length; i++) {
+      let x = 100
+      let y = i === 0 ? 43 : 22
+      let text = isLoginTextItems[i]
+      let value = '100 , 000'
+      this.drawLoginedTextItem(x, y, text, value, white054, white)
+    }
+
+    // 换行描述文案
+    this.drawDesc(white087)
     ctx.restore()
+  }
+
+  // 状态文案
+  drawLoginedTextItem = (x, y, text, value, white054, white) => {
+    let ctx = this.ctx
+    ctx.translate(0, y)
+    ctx.save()
+      ctx.font = 'normal 400 14px PingFang SC'
+      ctx.fillStyle = white054
+      ctx.fillText(text, 0, 0)
+
+      ctx.translate(x, 0)
+      ctx.font = 'normal 500 14px PingFang SC'
+      ctx.fillStyle = white
+      ctx.fillText(value, 0, 0)
+    ctx.restore()
+  }
+
+  // 描述文案
+  drawDesc = (white087) => {
+    const desc = `亚特兰蒂斯、阿瓦隆、庞贝古城……\n从一杯充满花果香气的咖啡里\n品味、聆听、阅读、感受、想象\n1 号闪耀人类文明之光的星球`
+    const descList = desc.split('\n')
+    let ctx = this.ctx
+    ctx.translate(0, 8)
+    for (let i = 0; i < descList.length; i++) {
+      const desc = descList[i];
+      ctx.translate(0, 22)
+      ctx.save()
+        ctx.font = 'normal 400 16px PingFang SC'
+        ctx.fillStyle = white087
+        ctx.fillText(desc, 0, 0)
+      ctx.restore()
+    }
   }
 
   // 轨道
@@ -175,6 +329,53 @@ export default class Index extends Component {
     ctx.strokeStyle = '#333333'
     ctx.stroke()
     ctx.restore()
+  }
+
+  getStarsWithCurStarIndex = () => {
+    
+    let { stars } = this.state
+    const starLength = stars.length
+
+    let rtn = []
+    for(let i=0; i<5; i++) {
+      // 从数组的-1到第四张 （1,2,3,4,6）
+      let starPosIndex = (i-1 + this.starCurIndex)%starLength
+      if (starPosIndex < 0) starPosIndex = starLength + starPosIndex
+      // console.log('starPosIndex is', starPosIndex)
+      let angle = (i-1)*60
+      if (angle < 0) angle += 360
+      let starInfo = {
+        image: this['star' + starPosIndex], 
+        starIndex: stars[starPosIndex].code,
+        angle
+      }
+      rtn.push(starInfo)
+    }
+    return rtn
+  }
+
+  getInitialStars = () => {
+    let { stars } = this.state
+    let rtn = []
+    for(let i=0; i<3; i++) {
+      let starPosIndex = i
+      let angle = i*60
+      let starInfo = {
+        image: this['star' + starPosIndex], 
+        starIndex: stars[starPosIndex].code,
+        angle
+      }
+      rtn.push(starInfo)
+    }
+    return rtn
+  }
+
+  getStarInfoByIndex = (index) => {
+    let { stars } = this.state
+    const starLength = stars.length
+    let starPosIndex = index%starLength
+    if (starPosIndex < 0) starPosIndex = starLength + starPosIndex
+    return stars[starPosIndex]
   }
 
   // 星球所对应的系数
@@ -301,7 +502,6 @@ export default class Index extends Component {
       let targetAngle = updateAngle-(updateAngle%60)
       if (triggerAngle) {
         targetAngle = updateAngle-(updateAngle%60)+60
-        this.transform = this.getCurCombinedTransform()
       }
       if (this.updateAngle < 0) {
         targetAngle = -targetAngle
@@ -321,20 +521,61 @@ export default class Index extends Component {
   }
 
   onAnimation = (targetAngle) => {
-    let angleList = []
-    if (this.updateAngle < targetAngle) {
-      for (let i = this.updateAngle; i < targetAngle; i++) {
-        angleList.push(Math.ceil(i))
-      }
-    } else {
-      for (let i = this.updateAngle; i > targetAngle; i--) {
-        angleList.push(Math.floor(i))
-      }
+    this.count = 0
+    this.animationStartAngle = this.updateAngle
+    this.distance = targetAngle - this.animationStartAngle
+    this.speed = this.distance / 15
+    this.indexBound = this.state.stars.length
+    
+    this.canvas.requestAnimationFrame(() => {
+      this.animationPlay()
+    })
+  }
+
+  getStarIndexWithAngle = () => {
+    let updateAngle = this.updateAngle > 0 ? this.updateAngle : -this.updateAngle
+    let triggerAngle = updateAngle%60 > 30
+    let targetAngle = updateAngle-(updateAngle%60)
+    let offsetPercentage = updateAngle%60 / 30
+    if (triggerAngle) {
+      targetAngle = updateAngle-(updateAngle%60)+60
+      offsetPercentage = (60 - updateAngle%60) / 30
     }
-    angleList.forEach((item, index) => setTimeout(() => {
-      this.updateAngle = item
+    if (this.updateAngle < 0) {
+      targetAngle = -targetAngle
+    }
+
+    let targetIndex = this.starCurIndex - targetAngle / 60
+
+    let { stars } = this.state
+    const starLength = stars.length
+    let starPosIndex = targetIndex%starLength
+    if (starPosIndex < 0) starPosIndex = starLength + starPosIndex
+
+    return {
+      angle: targetAngle,
+      offsetPercentage,
+      index: starPosIndex
+    }
+  }
+
+  animationPlay = () => {
+    this.count++
+    let curTarget = this.speed * this.count + this.animationStartAngle
+    if (this.count > this.distance / this.speed) {
+      let targetAngle = this.distance + this.animationStartAngle
+      this.starCurIndex += -targetAngle/60
+      this.starCurIndex %= this.indexBound
+      this.updateAngle = 0
+      this.getStarsWithCurStarIndex()
       this.draw()
-    }, index*5))
+    } else {
+      this.updateAngle = curTarget
+      this.draw()
+      this.canvas.requestAnimationFrame(() => {
+        this.animationPlay()
+      })
+    }
   }
 
   onPaning = (moveX, moveY) => {
