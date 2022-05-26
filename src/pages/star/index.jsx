@@ -25,68 +25,77 @@ export default class Index extends Component {
       canvasHeight: 0,
       stars: [
         {
-          url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_1.png',
+          icon:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_1.png',
           code: 1,
           img: {},
           name: '光环世界',
           enName: 'HALO',
           age: 1,
-          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
+          landColor: '#ff0000',
+          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`,
+          fragmentCount: 32,
+          userCount: 4
         },
         {
-          url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_2.png',
+          icon:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_2.png',
           code: 2,
           img: {},
           name: '光环世界',
           enName: 'HALO',
           age: 1,
-          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
+          landColor: '#ff0000',
+          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`,
+          fragmentCount: 32,
+          userCount: 4
         },
         {
-          url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_3.png',
+          icon:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_3.png',
           code: 3,
           img: {},
           name: '光环世界',
           enName: 'HALO',
           age: 1,
-          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
+          landColor: '#ff0000',
+          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`,
+          fragmentCount: 32,
+          userCount: 4
         },
         {
-          url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_4.png',
+          icon:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_4.png',
           code: 4,
           img: {},
           name: '光环世界',
           enName: 'HALO',
           age: 1,
-          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
+          landColor: '#ff0000',
+          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`,
+          fragmentCount: 32,
+          userCount: 4
         },
         {
-          url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_5.png',
+          icon:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_5.png',
           code: 5,
           img: {},
           name: '光环世界',
           enName: 'HALO',
           age: 1,
-          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
+          landColor: '#ff0000',
+          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`,
+          fragmentCount: 32,
+          userCount: 4
         },
         {
-          url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_6.png',
+          icon:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_6.png',
           code: 6,
           img: {},
           name: '光环世界',
           enName: 'HALO',
           age: 1,
-          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
+          landColor: '#ff0000',
+          desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`,
+          fragmentCount: 32,
+          userCount: 4
         },
-        // {
-        //   url:'https://bfe.oss-cn-hangzhou.aliyuncs.com/pic_number_star_6.png',
-        //   code: 7,
-        //   img: {},
-        //   name: '光环世界',
-        //   enName: 'HALO',
-        //   age: 1,
-        //   desc: `哈哈哈哈哈哈哈\n呵呵呵呵呵呵呵\n嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿嘿`
-        // }
       ]
     }
   }
@@ -100,7 +109,7 @@ export default class Index extends Component {
     let promises = []
     stars.forEach(star => {
       let p = Taro.getImageInfo({
-        src: star.url,
+        src: star.icon,
       }).then(res => res && res.path)
       promises.push(p)
     })
@@ -177,10 +186,7 @@ export default class Index extends Component {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight)
     ctx.save()
     let updateAngle = this.updateAngle || 0
-
-
     let starArray = this.animationInited ? this.getStarsWithCurStarIndex() : this.getInitialStars()
-
     for (let i=0; i<starArray.length; i++) {
       let angle = starArray[i].angle + updateAngle + 360
       angle = angle % 360
@@ -214,12 +220,10 @@ export default class Index extends Component {
     // if (this.updateAngle%60 === 0) {
     //   console.log('angle', angle, 'index', index, 'starInfo', starInfo);
     // }
-    let number = starInfo?.code || 0
+    let { code, name, enName, age, landColor, desc } = starInfo
     let alpha = (1 - offsetPercentage)*0.9 + 0.1
     let yOffset = offsetPercentage*20
-    let eName = 'HALO'
-    let cName = '光环世界'
-    let isLogin = true
+    let isLogined = false
     let ctx = this.ctx
     const alpha054 = 0.54
     const alpha087 = 0.87
@@ -234,20 +238,20 @@ export default class Index extends Component {
     ctx.save()
       ctx.font = `normal 700 ${28}px PingFang SC`
       ctx.fillStyle = white
-      ctx.fillText(`0${number} ${eName}`, 0, 0)
+      ctx.fillText(`0${code} ${enName}`, 0, 0)
     ctx.restore()
     // 中文名
     ctx.translate(0, 36)
     ctx.save()
       ctx.font = `normal 600 ${28}px PingFang SC`
       ctx.fillStyle = white
-      ctx.fillText(cName, 0, 0)
+      ctx.fillText(name, 0, 0)
     ctx.restore()
 
     // 是否登录标签
     ctx.translate(0, 43.5)
     ctx.save()
-      if (isLogin) {
+      if (isLogined) {
         ctx.fillStyle = `rgba(239,179,3,${alpha})`
         ctx.fillRect(0, 0, 56, 24)
       } else {
@@ -259,7 +263,7 @@ export default class Index extends Component {
       ctx.font = 'normal 500 14px PingFang SC'
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      if (isLogin) {
+      if (isLogined) {
         ctx.fillStyle = white
         ctx.fillText('已登录', 0, 0)
       } else {
@@ -270,34 +274,59 @@ export default class Index extends Component {
     ctx.restore()
       
     // 已登录和未登录的展示信息
-    let isLoginTextItems = ['上次登录时间：', '已收集碎片数：', '已完成任务数：']
-    for (let i = 0; i < isLoginTextItems.length; i++) {
-      let x = 100
-      let y = i === 0 ? 43 : 22
-      let text = isLoginTextItems[i]
-      let value = '100 , 000'
-      this.drawLoginedTextItem(x, y, text, value, white054, white)
+    const statusInfo = {
+      loginTime: '2022 / 03 / 10',
+      fragmentCount: 32,
+      taskCount: 4,
+      age,
+      code,
+      userCount: 12
     }
-
-    // 换行描述文案
+    this.drawStatusInfo(isLogined, statusInfo, white054, white)
     this.drawDesc(white087)
     ctx.restore()
   }
 
   // 状态文案
-  drawLoginedTextItem = (x, y, text, value, white054, white) => {
+  drawStatusInfo = (isLogined, statusInfo, white054, white) => {
+    const { loginTime, fragmentCount, taskCount = 4, userCount, age, code } = statusInfo
+    const info = {}
+    let isLoginedList = [
+      {text: '上次登录时间：', value: loginTime, x: 100},
+      {text: '已收集碎片数：', value: fragmentCount, x: 100},
+      {text: '已完成任务数：', value: taskCount, x: 100}
+    ]
+    let isUnLoginList = [
+      {text: `${code} 号星球的年龄：`, value: age, x: 110.5},
+      {text: '已登陆的旅行者：', value: userCount, x: 114},
+      {text: '星球碎片累计总数：', value: fragmentCount, x: 128}
+    ]
+    if (isLogined) {
+      info.loginTime = '2022 / 03 / 10'
+      info.fragmentCount = 32
+      info.taskCount = taskCount
+    } else {
+      info.age = age
+      info.userCount = userCount
+      info.fragmentCount = fragmentCount
+    }
     let ctx = this.ctx
-    ctx.translate(0, y)
-    ctx.save()
-      ctx.font = 'normal 400 14px PingFang SC'
-      ctx.fillStyle = white054
-      ctx.fillText(text, 0, 0)
-
-      ctx.translate(x, 0)
-      ctx.font = 'normal 500 14px PingFang SC'
-      ctx.fillStyle = white
-      ctx.fillText(value, 0, 0)
-    ctx.restore()
+    ctx.translate(0, 21)
+    const list = isLogined ? isLoginedList : isUnLoginList
+    list.map((item, index) => {
+      let { text, value, x } = item
+      ctx.translate(0, 22)
+      ctx.save()
+        ctx.font = 'normal 400 14px PingFang SC'
+        ctx.fillStyle = white054
+        ctx.fillText(text, 0, 0)
+  
+        ctx.translate(x, 0)
+        ctx.font = 'normal 500 14px PingFang SC'
+        ctx.fillStyle = white
+        ctx.fillText(value, 0, 0)
+      ctx.restore()
+    })
   }
 
   // 描述文案
